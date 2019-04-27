@@ -4,8 +4,8 @@
 
 You can see that Mask R-CNN algorithm runs in real time as fonnows using this program.
 <div align="center">
-  <img src="demo/detectron_ros1.png" width="250px"/>
-  <img src="demo/detectron_ros2.png" width="250px"/>
+  <img src="demo/detectron_ros1.png" width="400px"/>
+  <img src="demo/detectron_ros2.png" width="400px"/>
 </div>
 
 ## License
