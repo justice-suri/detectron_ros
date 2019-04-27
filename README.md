@@ -4,8 +4,8 @@
 
 You can see that Mask R-CNN algorithm runs in real time as fonnows using this program.
 <div align="center">
-  <img src="demo/detectron_ros1.png"/>
-  <img src="demo/detectron_ros2.png"/>
+  <img src="demo/detectron_ros1.png" width="250px"/>
+  <img src="demo/detectron_ros2.png" width="250px"/>
 </div>
 
 ## License
@@ -35,7 +35,16 @@ Please ensure that your Caffe2 installation was successful before proceeding by 
 
 ## Detectron
 
-To install Detectron, follow the [Detectrion github website](https://github.com/facebookresearch/Detectron/) and refer to the following [Installation instructions](https://github.com/facebookresearch/Detectron/blob/master/INSTALL.md)
+To install Detectron, follow the [Detectron github website](https://github.com/facebookresearch/Detectron/) and refer to the following [Installation instructions](https://github.com/facebookresearch/Detectron/blob/master/INSTALL.md)
+
+## OpenCV
+
+This program uses OpenCV 3.3 to display the image. To install the OpenCV 3.3 version in python, write as below.
+```
+pip2 install --user opencv-python==3.3.1.11
+or
+python2 -m pip install --user opencv-python==3.3.1.11
+```
 
 ## ROS dependencies
 
@@ -59,9 +68,7 @@ $ sudo apt install ros-melodic-openni2-launch
 ```
 
 Or you can download it from the site below and install it.
-```
-https://github.com/ros-drivers/openni2_camera
-```
+- https://github.com/ros-drivers/openni2_camera
 
 You can use other ros packages to use the camera. If your live camera program provides an image of the camera with topic of the following name, you can use it.
 ```
