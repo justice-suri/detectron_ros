@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<launch>
+
+<node name = "detectron" pkg="detectron_ros" type="run" output="screen"></node>
+	<param name = "package_path"	type="string"	value="$(find detectron_ros)"/>
+
+<include file="$(find openni2_launch)/launch/openni2.launch"/>
+
+</launch>

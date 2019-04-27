@@ -1,0 +1,95 @@
+#! /usr/bin/env python
+
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
+import rospy
+import rospkg
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge
+
+from std_msgs.msg import String
+
+from collections import defaultdict
+import argparse
+import cv2
+import glob
+import logging
+import os
+import sys
+import time
+
+from caffe2.python import workspace
+
+from detectron.core.config import assert_and_infer_cfg
+from detectron.core.config import cfg
+from detectron.core.config import merge_cfg_from_file
+from detectron.utils.io import cache_url
+from detectron.utils.logging import setup_logging
+from detectron.utils.timer import Timer
+import detectron.core.test_engine as infer_engine
+import detectron.datasets.dummy_datasets as dummy_datasets
+import detectron.utils.c2 as c2_utils
+import detectron.utils.vis as vis_utils
+
+c2_utils.import_detectron_ops()
+
+cfg_path = '/configs/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml'
+weight_url = '/configs/model_final.pkl'
+#weight_url = 'https://dl.fbaipublicfiles.com/detectron/35861858/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml.02_32_51.SgT4y1cO/output/train/coco_2014_train:coco_2014_valminusminival/generalized_rcnn/model_final.pkl'
+
+class subscribe_detectron:
+
+    def __init__(self):
+        rospack = rospkg.RosPack()
+        rospack.list()
+        self.detectron_pub = rospy.Publisher('detectron_topic', Image)
+
+        pkg_path = rospack.get_path('detectron_ros')
+        self.bridge = CvBridge()
+        merge_cfg_from_file(pkg_path+cfg_path)
+        cfg.NUM_GPUS = 1
+        weights = cache_url(pkg_path+weight_url,cfg.DOWNLOAD_CACHE)
+        assert_and_infer_cfg(cache_urls=False)
+        self.model = infer_engine.initialize_model_from_cfg(weights)
+        self.dummy_coco_dataset = dummy_datasets.get_coco_dataset()
+        self.semaphore = 0
+
+    def img_callback(self, image):
+        if self.semaphore == 0:
+            self.semaphore = 1
+            self.detectron_pub.publish(image)
+
+    def detectron_callback(self, image):
+        cv_image = self.bridge.imgmsg_to_cv2(image)
+        #img = cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB)
+        with c2_utils.NamedCudaScope(0):
+            cls_boxes, cls_segms, cls_keyps = infer_engine.im_detect_all(
+                self.model, cv_image, None
+            )
+
+        fig = vis_utils.vis_one_image_opencv(
+            cv_image[:, :, ::-1],  # BGR -> RGB for visualization
+            cls_boxes,
+            cls_segms,
+            cls_keyps,
+            dataset=self.dummy_coco_dataset,
+            show_class=True,
+            thresh=0.9,
+            kp_thresh=2,
+        )
+
+        cv2.namedWindow('Detectron')
+        cv2.imshow('Detectron', fig)
+        cv2.waitKey(3)
+        self.semaphore = 0
+
+if __name__ == '__main__':
+    rospy.init_node('detectron', anonymous=True)
+    workspace.GlobalInit(['caffe2', '--caffe2_log_level=0'])
+    sd = subscribe_detectron()
+    detectron_sub = rospy.Subscriber('detectron_topic', Image, sd.detectron_callback)
+    img_sub = rospy.Subscriber('/camera/rgb/image_raw', Image, sd.img_callback)
+    rospy.spin()
