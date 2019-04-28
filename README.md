@@ -1,4 +1,4 @@
-# Detectron_ros
+# DETECTRON_ROS:MASK R-CNN FOR ROS
 
  Detectron_ros is designed to allow Detectron to use image detection in real time using a live camera in ROS emvironment. This program includes [Mask R-CNN](https://arxiv.org/abs/1703.06870). It is written in Python and powered by the [Caffe2](https://github.com/caffe2/caffe2) deep learning framework.
 
