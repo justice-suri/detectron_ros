@@ -38,8 +38,8 @@ c2_utils.import_detectron_ops()
 
 camera_image = '/camera/rgb/image_raw'
 cfg_path = '/configs/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml'
-weight_url = '/configs/model_final.pkl'
-#weight_url = 'https://dl.fbaipublicfiles.com/detectron/35861858/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml.02_32_51.SgT4y1cO/output/train/coco_2014_train:coco_2014_valminusminival/generalized_rcnn/model_final.pkl'
+#weight_url = '/configs/model_final.pkl'
+weight_url = 'https://dl.fbaipublicfiles.com/detectron/35861858/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml.02_32_51.SgT4y1cO/output/train/coco_2014_train:coco_2014_valminusminival/generalized_rcnn/model_final.pkl'
 
 class subscribe_detectron:
 
